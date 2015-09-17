@@ -86,7 +86,6 @@
             this.startButton.TabIndex = 6;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = false;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // CurentLevelLabel
             // 

@@ -11,17 +11,11 @@ namespace MyClickerHeroesBot.Logic
 
         private readonly IntPtr _handler =  WinGetHandle();
 
-        private static WindowInterActionHelper _helperInstance;
-
 
         public static int Srccopy = 13369376;
 
 
 
-        public static WindowInterActionHelper getInstance()
-        {
-            return _helperInstance ?? (_helperInstance = new WindowInterActionHelper());
-        }
 
 
         public void SendLeftClick(Point p)
@@ -63,7 +57,7 @@ namespace MyClickerHeroesBot.Logic
 
             foreach (Process pList in Process.GetProcesses())
             {
-                if (pList.MainWindowTitle.Contains("Clicker Heroes"))
+                if (pList.MainWindowTitle.Equals("Clicker Heroes"))
                 {
                     return pList.MainWindowHandle;
                 }
