@@ -73,6 +73,16 @@ namespace MyClickerHeroesBot.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Dread_Knight_Gilded {
+            get {
+                object obj = ResourceManager.GetObject("Dread_Knight_Gilded", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Fish {
             get {
                 object obj = ResourceManager.GetObject("Fish", resourceCulture);
@@ -132,9 +142,9 @@ namespace MyClickerHeroesBot.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Samurai {
+        internal static System.Drawing.Bitmap Samurai_Gilded {
             get {
-                object obj = ResourceManager.GetObject("Samurai", resourceCulture);
+                object obj = ResourceManager.GetObject("Samurai_Gilded", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,43 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using MyClickerHeroesBot.Properties;
 
-namespace MyClickerHeroesBot
+namespace MyClickerHeroesBot.Logic
 {
     class WindowInterActionHelper
     {
-        private IntPtr handler =  WinGetHandle("Clicker Heroes");
 
-        private static WindowInterActionHelper helperInstance;
+        private readonly IntPtr _handler =  WinGetHandle();
+
+        private static WindowInterActionHelper _helperInstance;
 
 
         public static int Srccopy = 13369376;
 
-        private WindowInterActionHelper() { }
+
 
         public static WindowInterActionHelper getInstance()
         {
-            if (helperInstance == null)
-            {
-                helperInstance = new WindowInterActionHelper();
-            }
-            return helperInstance;
+            return _helperInstance ?? (_helperInstance = new WindowInterActionHelper());
         }
 
 
         public void SendLeftClick(Point p)
         {
 
-            SendMessage(handler, (int)WMessages.WM_LBUTTONDOWN, 0, MakeLParam(p));
-            SendMessage(handler, (int)WMessages.WM_LBUTTONUP, 0, MakeLParam(p));
+            SendMessage(_handler, (int)WMessages.WM_LBUTTONDOWN, 0, MakeLParam(p));
+            SendMessage(_handler, (int)WMessages.WM_LBUTTONUP, 0, MakeLParam(p));
         }
+        
+        public void SendLeftClick(Point p,int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                SendLeftClick(p);
+            }
+        }
+
 
         public void SendKeyPres(VKeys key)
         {
@@ -48,21 +49,21 @@ namespace MyClickerHeroesBot
         public void SendKeyDown(VKeys key)
         {
 
-            SendMessage(handler, (int)WMessages.WM_KEYDOWN, (int)key, 0);
+            SendMessage(_handler, (int)WMessages.WM_KEYDOWN, (int)key, 0);
         }
 
         public void SendKeyUp(VKeys key)
         {
 
-            SendMessage(handler, (int)WMessages.WM_KEYUP, (int)key, 0);
+            SendMessage(_handler, (int)WMessages.WM_KEYUP, (int)key, 0);
         }
 
-        public static IntPtr WinGetHandle(string wName)
+        public static IntPtr WinGetHandle()
         {
 
             foreach (Process pList in Process.GetProcesses())
             {
-                if (pList.MainWindowTitle.Contains(wName))
+                if (pList.MainWindowTitle.Contains("Clicker Heroes"))
                 {
                     return pList.MainWindowHandle;
                 }
@@ -70,13 +71,13 @@ namespace MyClickerHeroesBot
             return IntPtr.Zero;
         }
 
-        public Image CaptureWindow()
+        public Bitmap CaptureWindow()
         {
 
-            IntPtr hdcSrc = User32.GetWindowDC(handler);
+            IntPtr hdcSrc = User32.GetWindowDC(_handler);
 
             RECT windowRect = new RECT();
-            User32.GetWindowRect(handler, ref windowRect);
+            User32.GetWindowRect(_handler, ref windowRect);
 
             int width = windowRect.right - windowRect.left;
             int height = windowRect.bottom - windowRect.top;
@@ -88,13 +89,13 @@ namespace MyClickerHeroesBot
             Gdi32.BitBlt(hdcDest, 0, 0, width, height, hdcSrc, 0, 0, Srccopy);
             Gdi32.SelectObject(hdcDest, hOld);
             Gdi32.DeleteDC(hdcDest);
-            User32.ReleaseDC(handler, hdcSrc);
+            User32.ReleaseDC(_handler, hdcSrc);
 
             Image image = Image.FromHbitmap(hBitmap);
             Gdi32.DeleteObject(hBitmap);
 
 
-            return image;
+            return new Bitmap(image);
         }
 
         private Rectangle searchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance)
@@ -197,13 +198,10 @@ namespace MyClickerHeroesBot
             return location;
         }
 
-        public Rectangle SeartchBitmapAutoTolerance(Bitmap smallBmp)
+        public Rectangle SearchBitmapAutoTolerance(Bitmap smallBmp, Bitmap screenShot)
         {
-            Bitmap screenShot = new Bitmap(CaptureWindow());
-
-            screenShot.Save("screen.bmp");
             double i = 0;
-            while (i <= 0.2)
+            while (i <= 0.1)
             {
                 Rectangle find = searchBitmap(smallBmp, screenShot, i);
                 if (!find.IsEmpty)
@@ -398,6 +396,12 @@ namespace MyClickerHeroesBot
         public void ClearMousFokus()
         {
             SendLeftClick(new Point(1, 1)); 
+        }
+
+
+        public bool FoundProcess()
+        {
+            return !_handler.Equals(IntPtr.Zero);
         }
     }
 }
